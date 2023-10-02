@@ -1,11 +1,9 @@
 class Node {
-  constructor(key, data) {
+  constructor(key) {
     this.key = key;
-    this.data = data;
     this.height = 1;
     this.left = null;
     this.right = null;
-    this.count = 1;
   }
 }
 
@@ -52,7 +50,7 @@ class AVLTree {
     return y;
   }
 
-  insert = (root, key) => {
+  insert(root, key) {
     if (!root) return new Node(key);
 
     if (key < root.key) {
@@ -60,7 +58,6 @@ class AVLTree {
     } else if (key > root.key) {
       root.right = this.insert(root.right, key);
     } else {
-      root.count++;
       return root;
     }
 
@@ -87,21 +84,20 @@ class AVLTree {
     }
 
     return root;
-  };
+  }
 
-  insertKey = (key) => {
+  insertKey(key) {
     this.root = this.insert(this.root, key);
-  };
+  }
 
-  findMinNode = (node) => {
+  findMinNode(node) {
     while (node.left !== null) {
       node = node.left;
     }
-
     return node;
-  };
+  }
 
-  delete = (root, key) => {
+  delete(root, key) {
     if (!root) return root;
 
     if (key < root.key) {
@@ -109,28 +105,22 @@ class AVLTree {
     } else if (key > root.key) {
       root.right = this.delete(root.right, key);
     } else {
-      if (root.count > 1) {
-        root.count--;
-        return root;
-      } else if (!root.left || !root.right) {
+      if (!root.left || !root.right) {
         const temp = root.left || root.right;
-
         root = temp;
       } else {
         const temp = this.findMinNode(root.right);
-
         root.key = temp.key;
-        root.count = temp.count;
         root.right = this.delete(root.right, temp.key);
       }
     }
 
     if (!root) return root;
-
     this.updateHeight(root);
 
     const balance = this.balanceFactor(root);
 
+    // Rotações
     if (balance > 1) {
       if (this.balanceFactor(root.left) >= 0) {
         return this.rotateRight(root);
@@ -150,13 +140,13 @@ class AVLTree {
     }
 
     return root;
-  };
+  }
 
-  deleteKey = (key) => {
+  deleteKey(key) {
     this.root = this.delete(this.root, key);
-  };
+  }
 
-  search = (root, key) => {
+  search(root, key) {
     if (!root || root.key === key) return root;
 
     if (key < root.key) {
@@ -164,27 +154,25 @@ class AVLTree {
     } else {
       return this.search(root.right, key);
     }
-  };
+  }
 
-  searchKey = (key) => {
-    const searchResult = this.search(this.root, key);
+  searchKey(key) {
+    const result = this.search(this.root, key);
 
     console.log(
-      `Resultado para a chave ${key}:`,
-      searchResult ? "Encontrado" : "Não encontrado"
+      `Resultado da pesquisa para a chave ${key}:`,
+      result ? "Encontrado" : "Não encontrado"
     );
-  };
+  }
 
-  inOrderTraversal = (node, result = []) => {
+  inOrderTraversal(node, result = []) {
     if (node) {
       this.inOrderTraversal(node.left, result);
-      for (let i = 0; i < node.count; i++) {
-        result.push({ key: node.key });
-      }
+      result.push({ key: node.key });
       this.inOrderTraversal(node.right, result);
     }
     return result;
-  };
+  }
 
   display() {
     const result = this.inOrderTraversal(this.root);
@@ -194,19 +182,21 @@ class AVLTree {
 
 const avlTree = new AVLTree();
 
+//Insere chaves
 avlTree.insertKey(10);
 avlTree.insertKey(20);
 avlTree.insertKey(30);
 avlTree.insertKey(15);
 avlTree.insertKey(5);
-avlTree.insertKey(20);
 
-console.log("Árvore AVL após a inserção das chaves:");
+console.log("Árvore após a inserção das chaves:");
 avlTree.display();
 
+//Remove chave
 avlTree.deleteKey(20);
 
-console.log("Árvore AVL após a exclusão da chave 20:");
+console.log("Árvore após a remoção da chave 20:");
 avlTree.display();
 
+//Pesquisa chave
 avlTree.searchKey(15);
