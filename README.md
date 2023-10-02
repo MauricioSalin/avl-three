@@ -1,6 +1,6 @@
 # Exercício 2 -Implementação de árvores binárias AVL
 
-Exercício para disciplina de Complexidade de Algoritmos. Desenvolvido em Node.Js, 
+Exercício para disciplina de Complexidade de Algoritmos. Desenvolvido em Node.Js.
 
 - Inserção ✅
 - Remoção ✅
