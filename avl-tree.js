@@ -4,6 +4,7 @@ class Node {
     this.height = 1;
     this.left = null;
     this.right = null;
+    this.count = 1;
   }
 }
 
@@ -58,6 +59,8 @@ class AVLTree {
     } else if (key > root.key) {
       root.right = this.insert(root.right, key);
     } else {
+      // Chave duplicada, incrementa o contador
+      root.count++;
       return root;
     }
 
@@ -105,12 +108,18 @@ class AVLTree {
     } else if (key > root.key) {
       root.right = this.delete(root.right, key);
     } else {
-      if (!root.left || !root.right) {
+      if (root.count > 1) {
+        root.count--;
+        return root;
+      } else if (!root.left || !root.right) {
         const temp = root.left || root.right;
+
         root = temp;
       } else {
         const temp = this.findMinNode(root.right);
+
         root.key = temp.key;
+        root.count = temp.count;
         root.right = this.delete(root.right, temp.key);
       }
     }
@@ -120,7 +129,6 @@ class AVLTree {
 
     const balance = this.balanceFactor(root);
 
-    // Rotações
     if (balance > 1) {
       if (this.balanceFactor(root.left) >= 0) {
         return this.rotateRight(root);
@@ -157,46 +165,45 @@ class AVLTree {
   }
 
   searchKey(key) {
-    const result = this.search(this.root, key);
-
-    console.log(
-      `Resultado da pesquisa para a chave ${key}:`,
-      result ? "Encontrado" : "Não encontrado"
-    );
+    return this.search(this.root, key);
   }
 
   inOrderTraversal(node, result = []) {
     if (node) {
       this.inOrderTraversal(node.left, result);
-      result.push({ key: node.key });
+
+      for (let i = 0; i < node.count; i++) {
+        result.push({ key: node.key });
+      }
+
       this.inOrderTraversal(node.right, result);
     }
+
     return result;
   }
 
   display() {
-    const result = this.inOrderTraversal(this.root);
-    console.log(result);
+    console.log(this.inOrderTraversal(this.root));
   }
 }
 
 const avlTree = new AVLTree();
 
-//Insere chaves
-avlTree.insertKey(10);
-avlTree.insertKey(20);
-avlTree.insertKey(30);
-avlTree.insertKey(15);
-avlTree.insertKey(5);
+// Insere chaves
+avlTree.insertKey(10, "Dado 10");
+avlTree.insertKey(20, "Dado 20");
+avlTree.insertKey(30, "Dado 30");
+avlTree.insertKey(15, "Dado 15");
+avlTree.insertKey(5, "Dado 5");
+avlTree.insertKey(20, "Dado Extra 20"); // Testando chaves duplicadas
 
-console.log("Árvore após a inserção das chaves:");
+console.log("Árvore após a inserção:");
 avlTree.display();
 
-//Remove chave
+// Remove chave
 avlTree.deleteKey(20);
-
-console.log("Árvore após a remoção da chave 20:");
+console.log("Árvore após a exclusão da chave 20:");
 avlTree.display();
 
-//Pesquisa chave
+// Pesquisa chave
 avlTree.searchKey(15);
